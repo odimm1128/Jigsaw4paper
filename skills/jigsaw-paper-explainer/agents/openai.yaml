@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jigsaw 4 論文解説"
+  short_description: "Jigsaw IV の精読・相互説明・検証で科学論文を章ごとに解説する"
+  default_prompt: "$jigsaw-paper-explainer この論文を Jigsaw IV に基づいて精読・検証し、章ごとに日本語で詳しく解説してください。"
