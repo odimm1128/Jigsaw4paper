@@ -1,0 +1,12 @@
+{
+  "name": "jigsaw4paper",
+  "version": "0.1.0",
+  "description": "Jigsaw IV に基づき科学論文を分担精読・相互説明・理解検証・再読し、原論文の章順に根拠付きで解説する Claude Code プラグイン",
+  "author": {
+    "name": "odimm1128"
+  },
+  "homepage": "https://github.com/odimm1128/Jigsaw4paper",
+  "repository": "https://github.com/odimm1128/Jigsaw4paper",
+  "license": "MIT",
+  "keywords": ["paper", "reading", "jigsaw", "science", "japanese"]
+}
