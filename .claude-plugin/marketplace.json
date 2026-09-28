@@ -1,0 +1,19 @@
+{
+  "name": "jigsaw4paper",
+  "owner": {
+    "name": "odimm1128"
+  },
+  "metadata": {
+    "description": "Jigsaw IV による科学論文の精読・解説プラグイン"
+  },
+  "plugins": [
+    {
+      "name": "jigsaw4paper",
+      "source": "./plugins/jigsaw4paper",
+      "description": "Jigsaw IV に基づき科学論文を分担精読・相互説明・理解検証・再読し、原論文の章順に根拠付きで解説する",
+      "version": "0.1.0",
+      "license": "MIT",
+      "keywords": ["paper", "reading", "jigsaw", "science", "japanese"]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # Jigsaw4paper
 
-**科学論文を分担精読・相互説明・理解検証・再読し、原論文の章順に詳しく解説する Codex スキル。**
+**科学論文を分担精読・相互説明・理解検証・再読し、原論文の章順に詳しく解説する Codex / Claude Code 用スキル。**
 
 `jigsaw-paper-explainer` は、協同学習法 **Jigsaw IV（Jigsaw 4）** を AI の論文読解へ応用します。各章の主張を数式・図表・本文の根拠と照合し、章同士のつながりを統合してから、日本語の解説と検証記録を作成します。
 
@@ -10,16 +10,23 @@
 - **数式・図表を含む精読**：記号、仮定、導出、比較条件、図表から読み取れる範囲を扱います。
 - **根拠を追跡できる説明**：主要な主張に節・ページ・式・図表の位置を対応付けます。
 - **理解確認と訂正**：専門クイズ、統合クイズ、個別評価を原文と照合し、誤読した箇所を再読します。
-- **実行環境に応じた分担**：複数エージェントが使える場合は独立した部分を並行精読し、単独の場合は同じ工程を順に進めます。
+- **実行環境に応じた分担**：複数エージェントが使える場合は独立した部分を並行精読し、単独の場合は同じ工程を順に進めます。Claude Code 版では専門担当用のサブエージェント `jigsaw-expert-reader` を同梱しています。
 - **KaTeX 対応の数式記法**：Markdown のインライン数式は `$...$`、独立数式は `$$` ブロックで出力します。
 
 既定の読者は、専門外の理工系大学院生を想定しています。言語、前提知識、対象章、詳しさは依頼時に変更できます。短い要約だけ、全文翻訳だけ、文献探索だけの用途は対象外です。
 
 ## 導入
 
-スキルを利用できる Codex 環境が必要です。本リポジトリは指示と参照資料で構成されており、専用アプリや実行サーバーの起動は不要です。論文の取得・PDF の抽出や表示には、実行環境で利用可能なツールを使います。
+本リポジトリは指示と参照資料で構成されており、専用アプリや実行サーバーの起動は不要です。論文の取得・PDF の抽出や表示には、実行環境で利用可能なツールを使います。Codex 版と Claude Code 版は同じ手順（Jigsaw IV の 9 段階）と出力形式を共有し、ツールの使い方と分担の実装だけが異なります。
 
-### Codex にインストールを依頼する
+| 版 | 置き場所 | 呼び出し |
+| --- | --- | --- |
+| Codex | `skills/jigsaw-paper-explainer/` | `$jigsaw-paper-explainer` |
+| Claude Code | `plugins/jigsaw4paper/`（プラグイン） | `/jigsaw4paper:jigsaw-paper-explainer` または自然文の依頼 |
+
+### Codex 版
+
+#### Codex にインストールを依頼する
 
 `skill-installer` が利用できる環境では、次のように依頼します。
 
@@ -27,7 +34,7 @@
 $skill-installer https://github.com/odimm1128/Jigsaw4paper/tree/main/skills/jigsaw-paper-explainer のスキルをインストールしてください。
 ```
 
-### 手動で配置する
+#### 手動で配置する
 
 このリポジトリをダウンロードまたは clone し、`skills/jigsaw-paper-explainer/` をフォルダーごと、利用環境のスキル読み込み先へコピーします。`SKILL.md` だけでなく、`references/` と `agents/` も含めてください。
 
@@ -35,9 +42,37 @@ $skill-installer https://github.com/odimm1128/Jigsaw4paper/tree/main/skills/jigs
 
 配置後、Codex で `$jigsaw-paper-explainer` を選択します。スキルが表示されない場合は Codex を再起動してください。
 
+### Claude Code 版
+
+#### プラグインとしてインストールする
+
+このリポジトリはそのまま Claude Code のプラグインマーケットプレイスとして使えます。Claude Code で次を実行します。
+
+```text
+/plugin marketplace add odimm1128/Jigsaw4paper
+/plugin install jigsaw4paper@jigsaw4paper
+```
+
+ターミナルからは `claude plugin marketplace add odimm1128/Jigsaw4paper` でも追加できます。スキル `jigsaw-paper-explainer` と、分担精読用のサブエージェント `jigsaw4paper:jigsaw-expert-reader` が一緒に導入されます。更新は `/plugin marketplace update jigsaw4paper` で取得します。
+
+#### 手動で配置する
+
+プラグインを使わない場合は、次の 2 つをコピーします。
+
+| コピー元 | 個人用の配置先 | プロジェクト用の配置先 |
+| --- | --- | --- |
+| `plugins/jigsaw4paper/skills/jigsaw-paper-explainer/`（フォルダーごと） | `~/.claude/skills/jigsaw-paper-explainer/` | `.claude/skills/jigsaw-paper-explainer/` |
+| `plugins/jigsaw4paper/agents/jigsaw-expert-reader.md` | `~/.claude/agents/` | `.claude/agents/` |
+
+手動配置では名前空間が付かず、`/jigsaw-paper-explainer` で呼び出せます。サブエージェントを配置しなかった場合も、スキルは汎用エージェントに同じ指示を渡すか単独実行で進めます。詳細は [Claude Code のスキル](https://code.claude.com/docs/en/skills)・[サブエージェント](https://code.claude.com/docs/en/sub-agents)・[プラグイン](https://code.claude.com/docs/en/plugins) の公式ドキュメントを参照してください。
+
 ## 使い方
 
-論文 PDF、本文、ローカルパス、URL、DOI を渡せます。以下の `<...>` は実際の対象に置き換えてください。
+論文 PDF、本文、ローカルパス、URL、DOI を渡せます。以下の `<...>` は実際の対象に置き換えてください。例は Codex の記法です。Claude Code では `$jigsaw-paper-explainer` を `/jigsaw4paper:jigsaw-paper-explainer`（手動配置なら `/jigsaw-paper-explainer`）に置き換えるか、スラッシュコマンドなしで「この論文を Jigsaw 4 で精読して章ごとに解説して」と依頼します。
+
+```text
+/jigsaw4paper:jigsaw-paper-explainer ./papers/paper.pdf 全章を日本語で詳しく解説してください。
+```
 
 ### 論文全体を解説する
 
@@ -61,7 +96,7 @@ $jigsaw-paper-explainer <論文の URL>
 線形代数は理解していますが、この分野の専門用語は初出で説明してください。
 ```
 
-既定では理解確認への回答は Codex が行い、ユーザーの回答待ちで進行を止めません。読者自身が問題に答える形式を希望する場合は「対話型の理解確認を交えて」と指定してください。
+既定では理解確認への回答は Codex / Claude が行い、ユーザーの回答待ちで進行を止めません。読者自身が問題に答える形式を希望する場合は「対話型の理解確認を交えて」と指定してください。
 
 ## 読解の流れ
 
@@ -111,14 +146,14 @@ $$
 
 ## 確認範囲と限界
 
-要旨しか取得できなければ、要旨に基づく暫定解説として出力します。本文にない章・式・結果を補作せず、図の未確認や補足資料の不足も明示します。著者の主張、報告結果、Codex による補足推論を区別します。
+要旨しか取得できなければ、要旨に基づく暫定解説として出力します。本文にない章・式・結果を補作せず、図の未確認や補足資料の不足も明示します。著者の主張、報告結果、AI による補足推論を区別します。
 
 複数エージェントの一致やクイズへの正答は、論文の正しさや完全な理解を保証しません。このスキルは、確認した根拠と訂正の記録を通じて説明を点検できるようにするものです。
 
 ## リポジトリ構成
 
 ```text
-skills/jigsaw-paper-explainer/
+skills/jigsaw-paper-explainer/          # Codex 版
 ├── SKILL.md
 ├── agents/
 │   └── openai.yaml
@@ -126,7 +161,18 @@ skills/jigsaw-paper-explainer/
     ├── jigsaw-method.md       # 原法の出典と AI 向け翻案の対応
     ├── scientific-reading.md  # 科学論文の読解・検証項目
     └── output-format.md       # 解説・検証記録・KaTeX の出力規則
+
+.claude-plugin/marketplace.json         # Claude Code 用マーケットプレイス定義
+plugins/jigsaw4paper/                   # Claude Code 版（プラグイン）
+├── .claude-plugin/plugin.json
+├── agents/
+│   └── jigsaw-expert-reader.md         # 分担精読・採点を担う専門担当サブエージェント
+└── skills/jigsaw-paper-explainer/
+    ├── SKILL.md
+    └── references/                     # Codex 版と同じ内容（主語のみ Claude）
 ```
+
+`references/` は両版で同じ内容を保っています。一方を更新したときはもう一方にも反映してください。
 
 ## Jigsaw IV の出典
 
