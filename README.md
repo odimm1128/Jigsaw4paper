@@ -10,7 +10,7 @@
 - **数式・図表を含む精読**：記号、仮定、導出、比較条件、図表から読み取れる範囲を扱います。
 - **根拠を追跡できる説明**：主要な主張に節・ページ・式・図表の位置を対応付けます。
 - **理解確認と訂正**：専門クイズ、統合クイズ、個別評価を原文と照合し、誤読した箇所を再読します。
-- **実行環境に応じた分担**：複数エージェントが使える場合は独立した部分を並行精読し、単独の場合は同じ工程を順に進めます。Claude Code 版では専門担当用のサブエージェント `jigsaw-expert-reader` を同梱しています。
+- **実行環境に応じた分担**：複数のエージェントに部分を分担して並行精読させます。エージェントを利用できない環境では、何も実行せず終了します。Claude Code 版では専門担当用のサブエージェント `jigsaw-expert-reader` を同梱しています。
 - **KaTeX 対応の数式記法**：Markdown のインライン数式は `$...$`、独立数式は `$$` ブロックで出力します。
 
 既定の読者は、専門外の理工系大学院生を想定しています。言語、前提知識、対象章、詳しさは依頼時に変更できます。短い要約だけ、全文翻訳だけ、文献探索だけの用途は対象外です。
@@ -64,7 +64,7 @@ $skill-installer https://github.com/odimm1128/Jigsaw4paper/tree/main/skills/jigs
 | `plugins/jigsaw4paper/skills/jigsaw-paper-explainer/`（フォルダーごと） | `~/.claude/skills/jigsaw-paper-explainer/` | `.claude/skills/jigsaw-paper-explainer/` |
 | `plugins/jigsaw4paper/agents/jigsaw-expert-reader.md` | `~/.claude/agents/` | `.claude/agents/` |
 
-手動配置では名前空間が付かず、`/jigsaw-paper-explainer` で呼び出せます。サブエージェントを配置しなかった場合も、スキルは汎用エージェントに同じ指示を渡すか単独実行で進めます。詳細は [Claude Code のスキル](https://code.claude.com/docs/en/skills)・[サブエージェント](https://code.claude.com/docs/en/sub-agents)・[プラグイン](https://code.claude.com/docs/en/plugins) の公式ドキュメントを参照してください。
+手動配置では名前空間が付かず、`/jigsaw-paper-explainer` で呼び出せます。サブエージェントを配置しなかった場合は、スキルが汎用エージェントに同じ指示を渡します。Agent ツールが使えない環境では実行しません。詳細は [Claude Code のスキル](https://code.claude.com/docs/en/skills)・[サブエージェント](https://code.claude.com/docs/en/sub-agents)・[プラグイン](https://code.claude.com/docs/en/plugins) の公式ドキュメントを参照してください。
 
 ## 使い方
 
